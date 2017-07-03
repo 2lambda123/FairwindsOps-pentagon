@@ -8,5 +8,6 @@ You also need to properly configure your terraform-remote state for both the VPC
 * $AWS_DEFAULT_REGION should be set in `config/private/vars`
 
 Then run:
+`./terraform-remote.sh`
 `make plan`
 `make apply`
