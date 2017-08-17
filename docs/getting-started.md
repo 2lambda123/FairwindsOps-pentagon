@@ -1,14 +1,14 @@
 # What is Pentagon?
 
-**Pentagon is a cli tool to generate repeatable, cloud-based [Kubernetes](https://kubernetes.io/) infrastructure**
-It is “batteries included”- not only does one get a network with a cluster, but the defaults include these commonly desired features:
-- At the core, powered by Kubernetes. Configured to be highly-available: masters and nodes are clustered
+**Pentagon is a cli tool to generate repeatable, cloud-based [Kubernetes](https://kubernetes.io/) infrastructure**.
+Pentagon is “batteries included”- not only does one get a network with a cluster, but the defaults include these commonly desired features:
+- At it's core, powered by Kubernetes. Configured to be highly-available: masters and nodes are clustered
 - Segregated multiple development / non-production environments
 - VPN-based access control
 - A highly-available network, built across multiple Availability Zones
 
 ## How does it work?
- **Pentagon produces a directory.** The directory defines a basic set of configurations for [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/) and [kops](https://github.com/kubernetes/kops)). When those tools are run in a specific order the result is a VPC with a VPN and a Kubernetes Cluster in AWS. (GKE Support is in the works). It is designed to be customizable while at the same time built with defaults that fit the needs of most web application companies.
+ **Pentagon produces a directory.** The directory defines a basic set of configurations for [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), and [kops](https://github.com/kubernetes/kops). When these tools are run in a specific order the result is a VPC with a VPN and a Kubernetes Cluster in AWS. (GKE Support is in the works). Pentagon is designed to be customizable but has defaults that fit most software infrastructure needs. 
 
 # Getting Started with Pentagon
 
@@ -23,19 +23,19 @@ It is “batteries included”- not only does one get a network with a cluster, 
 
 ## Installation
 * `pip install -e git+https://github.com/reactiveops/pentagon.git#egg=pentagon`
-  * the `-e` is important to include. The next steps will fail without it.
+  * The `-e` is important to include. The next steps will fail without it.
   * May require the `python-dev` and `libffi-dev` packages on some linux distributions
   * Not necessary, but we suggest installing Pentagon into a [VirtualEnv](https://virtualenv.pypa.io/en/stable/)
 
 ## Quick Start
-### Create a pentagon project
+### Create a Pentagon Project
 * `pentagon start-project <project-name> --aws-access-key <aws-access-key> --aws-secret-key <aws-secret-key> --aws-default-region <aws-default-region>`
-  * With the above basic options set, all defaults will be set for you and unless values need to be updated, you should be able to run terraform after creating the S3 Bucket to store state (`infrastructure-bucket`).
+  * With the above basic options set, all defaults will be set for you. You should be able to run Terraform after creating the S3 Bucket to store state unless values need to be updated. (`infrastructure-bucket`).
   * Arguments may also be set using environment variable in the format `PENTAGON_<argument_name_with_underscores>`.
 * `cd <project-name>-infrastructure`
 * `pip install -r requirements.txt`
 * `source config/local/env-vars.sh`
-  * sources environment variables required for the further steps. This wil be required each time you work with the infrastructure repository or if you move the repository to another location.
+  * Sources environment variables required for the further steps. This will be required each time you work with the infrastructure repository or if you move the repository to another location.
 * `bash config/local/local-config-init`
 
 ### Create a VPC
@@ -64,8 +64,8 @@ This creates a AWS instance running [OpenVPN](https://openvpn.net/). Read more a
   * Run `ansible-playbook vpn.yml` one last time and it will succeed.
   * Edit `config/private/ssh_config` and add the IP address from the SSH key prompt to the `#VPN instance` section.
 
-### Create a Kubernetes cluster
-Pentagon used Kops to create clusters in AWS. The default layout creates configurations for two kubernetes clusters: `working` and `production`. See [Overview](overview.md) for a more comprehensive description of the directory layout.
+### Create a Kubernetes Cluster
+Pentagon used Kops to create clusters in AWS. The default layout creates configurations for two Kubernetes clusters: `working` and `production`. See [Overview](overview.md) for a more comprehensive description of the directory layout.
 
 * Make sure your KOPS variables are set correctly with `source default/account/vars.sh`
 * Move into to the path for the cluster you want to work on with `cd default/clusters/<production|working>`
@@ -82,34 +82,34 @@ Pentagon used Kops to create clusters in AWS. The default layout creates configu
 * Run `kops update cluster <clustername> --yes` to create the cluster
 * While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using kops and interacting with your new cluster
 
-### Creating resources outside of Kubernetes
+### Creating Resources Outside of Kubernetes
 
-Typically infrastructure will be required outside of your Kubernetes cluster. Other EC2 isntances or RDS instance or Elasticache instances etc are often require for an application.
+Typically infrastructure will be required outside of your Kubernetes cluster. Other EC2, RDS, or Elasticache instances, etc are often require for an application.
 
-The directory structure of the project suggests that you use Ansible to create these resources and that the ansible playbooks can be save in the `default/resources/` direcotry or the `default/clusters/<cluster>/resoures/` directory depending on the scope the play book will be utilized. If the resoures is not specific to either cluster, then we suggest you save it at the `deault/resources/` level. Likewise, if it is a resources that will only be used by one cluster, such as a staging database or a production database, then we suggest writing the Ansible playbook at the `default/cluster/<cluster>/resources/` level. Writing ansible roles can be very helpful to DRY up your resource configurations.
+The directory structure of the project suggests that you use Ansible to create these resources and that the Ansible playbooks can be save in the `default/resources/` directory or the `default/clusters/<cluster>/resoures/` This depends on the scope with which the play book will be utilized. If the resources are not specific to either cluster, then we suggest you save it at the `deault/resources/` level. Likewise, if it is a resource that will only be used by one cluster, such as a staging database or a production database, then we suggest writing the Ansible playbook at the `default/cluster/<cluster>/resources/` level. Writing Ansible roles can be very helpful to DRY up your resource configurations.
 
 
 ======================================
 
 ## Advanced Project Initialization
 
-If you wish to utilize the templating ability of the `pentagon start-project` command, but need to modify the defaults, a comprehensive list of command line flags, listed below, should be able to customize the outout of the `pentagon start-project` command to your liking.
+If you wish to utilize the templating ability of the `pentagon start-project` command, but need to modify the defaults, a comprehensive list of command line flags (listed below) should be able to customize the outout of the `pentagon start-project` command to your liking.
 
 
-### Start new project
+### Start New Project
 * `pentagon start-project <project-name> <options>`
   * This will create a skeleton repository with placeholder strings in place of the options shown above in the [QUICK START]
   * Edit the `config/private/secrets.yml` and `config/local/env.yml` before proceeding onto the next step
 
-### Clone existing project
+### Clone Existing Project
 * `pentagon start-project <project-name> --git-repo <repository-of-existing-project> <options>`
 
-### Available commands
+### Available Commands
 * `pentagon start-project`
 
 ### _start-project_
 
- `pentagon start-project` creates a new project in your workspace directory and creates a matching virtualenv for you. Most values have defaults that should get you up and running very quickly with a new pentagon project. You may also clone an existing pentagon project if one exists.  You may set any of these options as environment variables instead by prefixing them with `PENTAGON_`, for example, for security purposes `PENTAGON_aws_access_key` can be used instead of `--aws-access-key`
+ `pentagon start-project` creates a new project in your workspace directory and creates a matching virtualenv for you. Most values have defaults that should get you up and running very quickly with a new Pentagon project. You may also clone an existing Pentagon project if one exists.  You may set any of these options as environment variables instead by prefixing them with `PENTAGON_`, for example, for security purposes `PENTAGON_aws_access_key` can be used instead of `--aws-access-key`
 
  #### Options
   * **-f, --config-file**:
