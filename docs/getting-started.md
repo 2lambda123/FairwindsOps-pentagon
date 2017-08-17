@@ -8,7 +8,7 @@ Pentagon is “batteries included”- not only does one get a network with a clu
 - A highly-available network, built across multiple Availability Zones
 
 ## How does it work?
- **Pentagon produces a directory.** The directory defines a basic set of configurations for [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), and [kops](https://github.com/kubernetes/kops). When these tools are run in a specific order the result is a VPC with a VPN and a Kubernetes Cluster in AWS. (GKE Support is in the works). Pentagon is designed to be customizable but has defaults that fit most software infrastructure needs. 
+ **Pentagon produces a directory.** The directory defines a basic set of configurations for [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), and [kops](https://github.com/kubernetes/kops). When these tools are run in a specific order the result is a VPC with a VPN and a Kubernetes cluster in AWS. (GKE Support is in the works). Pentagon is designed to be customizable but has defaults that fit most software infrastructure needs. 
 
 # Getting Started with Pentagon
 
@@ -24,7 +24,7 @@ Pentagon is “batteries included”- not only does one get a network with a clu
 ## Installation
 * `pip install -e git+https://github.com/reactiveops/pentagon.git#egg=pentagon`
   * The `-e` is important to include. The next steps will fail without it.
-  * May require the `python-dev` and `libffi-dev` packages on some linux distributions
+  * May require the `python-dev` and `libffi-dev` packages on some Linux distributions
   * Not necessary, but we suggest installing Pentagon into a [VirtualEnv](https://virtualenv.pypa.io/en/stable/)
 
 ## Quick Start
@@ -35,11 +35,11 @@ Pentagon is “batteries included”- not only does one get a network with a clu
 * `cd <project-name>-infrastructure`
 * `pip install -r requirements.txt`
 * `source config/local/env-vars.sh`
-  * Sources environment variables required for the further steps. This will be required each time you work with the infrastructure repository or if you move the repository to another location.
+  * Sources environment variables required for the following steps. This will be required each time you work with the infrastructure repository or if you move the repository to another location.
 * `bash config/local/local-config-init`
 
 ### Create a VPC
-This creates a VPC and private, public, and admin subnets in that VPC for non Kubernetes resources. Read more about networking [here](network.md).
+This creates the VPC and private, public, and admin subnets in that VPC for non Kubernetes resources. Read more about networking [here](network.md).
 * `cd default/vpc`
 * Edit `terraform.tfvars`and verify the generated `aws_azs` actually exist in `aws_region`
 * `make all`
@@ -80,20 +80,20 @@ Pentagon used Kops to create clusters in AWS. The default layout creates configu
     * `kops edit instancegroups --name <clustername> <instancegroupname>` to edit any of them
 * Run `kops update cluster <clustername>` and review the out put to ensure it matches the cluster you wish to create
 * Run `kops update cluster <clustername> --yes` to create the cluster
-* While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using kops and interacting with your new cluster
+* While waiting for the cluster to create, consult the [kops documentation](https://github.com/kubernetes/kops/blob/master/docs/README.md) for more information about using Kops and interacting with your new cluster
 
 ### Creating Resources Outside of Kubernetes
 
 Typically infrastructure will be required outside of your Kubernetes cluster. Other EC2, RDS, or Elasticache instances, etc are often require for an application.
 
-The directory structure of the project suggests that you use Ansible to create these resources and that the Ansible playbooks can be save in the `default/resources/` directory or the `default/clusters/<cluster>/resoures/` This depends on the scope with which the play book will be utilized. If the resources are not specific to either cluster, then we suggest you save it at the `deault/resources/` level. Likewise, if it is a resource that will only be used by one cluster, such as a staging database or a production database, then we suggest writing the Ansible playbook at the `default/cluster/<cluster>/resources/` level. Writing Ansible roles can be very helpful to DRY up your resource configurations.
+Pentagon convention suggests you use Ansible to create these resources and that the Ansible playbooks can be saved in the `default/resources/` or the `default/clusters/<cluster>/resoures/` directory. This depends on the scope with which the play book will be utilized. If the resources are not specific to either cluster, then we suggest you save it at the `default/resources/` level. Likewise, if it is a resource that will only be used by one cluster, such as a staging database or a production database, then we suggest writing the Ansible playbook at the `default/cluster/<cluster>/resources/` level. Writing Ansible roles can be very helpful to DRY up your resource configurations.
 
 
 ======================================
 
 ## Advanced Project Initialization
 
-If you wish to utilize the templating ability of the `pentagon start-project` command, but need to modify the defaults, a comprehensive list of command line flags (listed below) should be able to customize the outout of the `pentagon start-project` command to your liking.
+If you wish to utilize the templating ability of the `pentagon start-project` command, but need to modify the defaults, a comprehensive list of command line flags (listed below) should be able to customize the output of the `pentagon start-project` command to your liking.
 
 
 ### Start New Project
@@ -160,30 +160,30 @@ If you wish to utilize the templating ability of the `pentagon start-project` co
     * No Default
     * ***When --git-repo is set, no configuration actions are taken. Pentagon will setup the virutualenv and clone the repository only***
   * **--create-keys / --no-create-keys**:
-    * Create ssh keys or not
+    * Create SSH keys or not
     * Defaults to True
     * Keys are saved to `<workspace>/<repsitory-name>/config/private`
     * 5 keys will be created:
-      * `admin_vpn`: key for the vpn instances
-      * `working_kube`: key for working kubernetes instances
-      * `production_kube`: key for production kubernetes instance
-      * `working_private`: key for non-kubernetes resources in the working private subnets
-      * `production_private`: key for non-kubernetes resources in the production private subnets
+      * `admin_vpn`: key for the VPN instances
+      * `working_kube`: key for working Kubernetes instances
+      * `production_kube`: key for production Kubernetes instance
+      * `working_private`: key for non-Kubernetes resources in the working private subnets
+      * `production_private`: key for non-Kubernetes resources in the production private subnets
     * ***Keys are not uploaded to AWS. When needed, this will need to be done manually***
   * **--admin-vpn-key**:
-    * Name of the ssh key for the admin user of the VPN instance
+    * Name of the SSH key for the admin user of the VPN instance
     * Defaults to 'admin_vpn'
   * **--working-kube-key**:
-    * Name of the ssh key for the working kubernetes cluster
+    * Name of the SSH key for the working Kubernetes cluster
     * Defaults to 'working_kube'
   * **--production-kube-key**:
-    * Name of the ssh key for the production kubernetes cluster
+    * Name of the SSH key for the production Kubernetes cluster
     * Defaults to 'production_kube'
   * **--working-private-key**:
-    * Name of the ssh key for the working non-kubernetes instances
+    * Name of the SSH key for the working non-Kubernetes instances
     * Defaults to 'working_private'
   * **--production-private-key**:
-    * Name of the ssh key for the production non-kubernetes instances
+    * Name of the SSH key for the production non-Kubernetes instances
     * Defaults to 'production_private'
   * **--vpc-name**:
     * Name of VPC to create
@@ -192,52 +192,52 @@ If you wish to utilize the templating ability of the `pentagon start-project` co
     * First two octets of the VPC ip space
     * Defaults to '172.20'
   * **--working-kubernetes-cluster-name**:
-    * Name of the working kubernetes cluster nodes
+    * Name of the working Kubernetes cluster nodes
     * Defaults to `working-1.<project-name>.com`
   * **--working-kubernetes-node-count**:
-    * Number of the working kubernetes cluster nodes
+    * Number of the working Kubernetes cluster nodes
     * Defaults to 3
   * **--working-kubernetes-master-aws-zone**:
-    * Availability zone to place the kube master in
+    * Availability zone to place the Kube master in
     * Defaults to the first zone in --aws-availability-zones
   * **--working-kubernetes-master-node-type**:
-    * AWS instance type of the kube master node in the working cluster
+    * AWS instance type of the Kube master node in the working cluster
     * Defaults to t2.medium
   * **--working-kubernetes-worker-node-type**:
-    * AWS instance type of the kube worker nodes in the working cluster
+    * AWS instance type of the Kube worker nodes in the working cluster
     * Defaults to t2.medium
   * **--working-kubernetes-dns-zone**:
-    * DNS Zone of the kubernetes working cluster
+    * DNS Zone of the Kubernetes working cluster
     * Defaults to `working.<project-name>.com`
   * **--working-kubernetes-v-log-level**:
-    * V Log Level kubernetes working cluster
+    * V Log Level Kubernetes working cluster
     * Defaults to 10
   * **--working-kubernetes-network-cidr**:
-    * Network cidr of the kubernetes working cluster
+    * Network cidr of the Kubernetes working cluster
     * Defaults to `172.20.0.0/16`
   * **--production-kubernetes-cluster-name**:
-    * Name of the production kubernetes cluster nodes
+    * Name of the production Kubernetes cluster nodes
     * Defaults to `production-1.<project-name>.com`
   * **--production-kubernetes-node-count**:
-    * Number of the production kubernetes cluster nodes
+    * Number of the production Kubernetes cluster nodes
     * Defaults to 3
   * **--production-kubernetes-master-aws-zone**:
-    * Availability zone to place the kube master in
-    * Defaults to the first zone in --aws-availability-zones
+    * Availability zone to place the Kube master in
+    * Defaults to the first zone in --AWS-availability-zones
   * **--production-kubernetes-master-node-type**:
-    * AWS instance type of the kube master node in the production cluster
+    * AWS instance type of the Kube master node in the production cluster
     * Defaults to t2.medium
   * **--production-kubernetes-worker-node-type**:
-    * AWS instance type of the kube worker nodes in the production cluster
+    * AWS instance type of the Kube worker nodes in the production cluster
     * Defaults to t2.medium
   * **--production-kubernetes-dns-zone**:
-    * DNS Zone of the kubernetes production cluster
+    * DNS Zone of the Kubernetes production cluster
     * Defaults to `production.<project-name>.com`
   * **--production-kubernetes-v-log-level**:
-    * V Log Level kubernetes production cluster
+    * V Log Level Kubernetes production cluster
     * Defaults to 10
   * **--production-kubernetes-network-cidr**:
-    * Network cidr of the kubernetes production cluster
+    * Network cidr of the Kubernetes production cluster
     * Defaults to `172.20.0.0/16`
   * **--configure-vpn/--no-configure-vpn**:
     * Do, or do not configure the vpn env.yaml file
