@@ -1,3 +1,10 @@
+Cookie Cutter Version!
+
+Try with
+
+`cookiecutter 'https://github.com/reactiveops/pentagon.git' -c pc/cookies`
+
+
 # Pentagon
 
 ## What is Pentagon?

@@ -25,20 +25,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Install Pentagon
+          name: Generate repository
           command: |
-            sudo pip install -e .
-      - run:
-          name: Unit Tests
-          command: |
-            sudo pip install -r ${HOME}/pentagon/lib/tests/requirements.txt
-            nosetests
-      - run:
-          name: Build Docker Image
-          command: |
-            docker build -t pentagon .
-
-      - run:
-          name: Test Start Project
-          command: |
-            docker run --rm pentagon pentagon start-project circleci-test
+            sudo pip install cookiecutter
+            cookiecutter ${HOME}/pentagon --no-input
