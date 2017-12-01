@@ -4,8 +4,14 @@
 resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|replace(' ','_')|lower }}" {
   name               = "{{ monitor.name }}"
   type               = "{{ monitor.type }}"
-  message            = "{{ monitor.message }}"
-  escalation_message = "{{ monitor.options.escalation_message }}"
+  
+  message            = <<EOF
+  {{ monitor.message }}
+  EOF
+  
+  escalation_message = <<EOF
+  {{ monitor.options.escalation_message }}
+  EOF
 
   query = "{{ monitor.query }}"
 
@@ -15,12 +21,12 @@ resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|repl
     {%- endfor %}
   }
 
-  notify_no_data    = {{ monitor.options.notify_no_data }}
+  notify_no_data    = {{ monitor.options.notify_no_data|lower }}
   renotify_interval = {{ monitor.options.renotify_interval }}
 
-  notify_audit = {{ monitor.options.notify_audit }}
+  notify_audit = {{ monitor.options.notify_audit|lower }}
   timeout_h    = {{ monitor.options.timeout_h }}
-  include_tags = {{ monitor.options.include_tags }}
+  include_tags = {{ monitor.options.include_tags|lower }}
 
   silenced {
     "*" = 0
