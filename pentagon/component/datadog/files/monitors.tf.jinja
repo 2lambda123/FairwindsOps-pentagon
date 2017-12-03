@@ -9,9 +9,11 @@ resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|repl
   {{ monitor.message }}
   EOF
   
+  {%- if escalation_message %}
   escalation_message = <<EOF
   {{ monitor.options.escalation_message }}
   EOF
+  {%- endif %}
 
   query = "{{ monitor.query }}"
 

@@ -4,4 +4,4 @@ import os
 
 
 class Datadog(ComponentBase):
-    pass
+    _environment = [{'aws_region': 'AWS_DEFAULT_REGION'}, 'infrastructure_bucket']
