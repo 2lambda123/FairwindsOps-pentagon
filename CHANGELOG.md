@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `yaml_source` script to replace env-vars.sh
 - Environment variables are now checked in ComponentBase class
+- Added Datadog component that creates TF code to deploy Datadog monitors
 
 ### Removed
 - env-vars.sh script
