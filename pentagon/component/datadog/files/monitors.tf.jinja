@@ -1,7 +1,7 @@
 
 {% for monitor in monitors -%}
 
-resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|replace(' ','_')|lower }}" {
+resource "datadog_monitor" "{{ monitor.name|replace('/','')|replace('[','')|replace(']','')|replace(' ','_')|lower }}" {
   name               = "{{ monitor.name }}"
   type               = "{{ monitor.type }}"
   
@@ -15,7 +15,7 @@ resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|repl
   EOF
   {%- endif %}
 
-  query = "{{ monitor.query }}"
+  query = "{{ monitor.query|replace('"',"'") }}"
 
   thresholds {
     {%- for key in monitor.options.thresholds %}
@@ -28,7 +28,9 @@ resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|repl
 
   notify_audit = {{ monitor.options.notify_audit|lower }}
   timeout_h    = {{ monitor.options.timeout_h }}
+  {%- if include_tags %}
   include_tags = {{ monitor.options.include_tags|lower }}
+  {%- endif %}
 
   silenced {
     "*" = 0
@@ -39,4 +41,4 @@ resource "datadog_monitor" "{{ monitor.name|replace('[','')|replace(']','')|repl
   {%- endif %}
 }
 
-{%- endfor %}
+{% endfor %}
