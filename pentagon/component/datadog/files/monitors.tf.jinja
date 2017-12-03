@@ -1,0 +1,44 @@
+
+{% for monitor in monitors -%}
+
+resource "datadog_monitor" "{{ monitor.name|replace('/','')|replace('[','')|replace(']','')|replace(' ','_')|lower }}" {
+  name               = "{{ monitor.name }}"
+  type               = "{{ monitor.type }}"
+  
+  message            = <<EOF
+  {{ monitor.message }}
+  EOF
+  
+  {%- if escalation_message %}
+  escalation_message = <<EOF
+  {{ monitor.options.escalation_message }}
+  EOF
+  {%- endif %}
+
+  query = "{{ monitor.query|replace('"',"'") }}"
+
+  thresholds {
+    {%- for key in monitor.options.thresholds %}
+    {{ key }} = {{ monitor.options.thresholds[key] }}
+    {%- endfor %}
+  }
+
+  notify_no_data    = {{ monitor.options.notify_no_data|lower }}
+  renotify_interval = {{ monitor.options.renotify_interval }}
+
+  notify_audit = {{ monitor.options.notify_audit|lower }}
+  timeout_h    = {{ monitor.options.timeout_h }}
+  {%- if include_tags %}
+  include_tags = {{ monitor.options.include_tags|lower }}
+  {%- endif %}
+
+  silenced {
+    "*" = 0
+  }
+
+  {%- if monitor.tags %}
+  tags = {{ monitor.tags }}
+  {%- endif %}
+}
+
+{% endfor %}
