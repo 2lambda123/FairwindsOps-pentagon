@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## Removed
+- Removing default scripts from the infrastructure repository
+	* `local-config-init` script
+	* `Makefile`s
+
 ## [2.2.1] - 2018-4-9
 
 ## Removed `auto-approve` from terraform Makefile

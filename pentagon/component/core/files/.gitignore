@@ -4,5 +4,6 @@
 *.pem
 *.pub
 *secret*.yml
+**/private
 roles
 helm
