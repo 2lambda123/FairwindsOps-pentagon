@@ -9,7 +9,7 @@ import os
 import re
 import sys
 import traceback
-import yaml
+import oyaml as yaml
 import boto3
 
 from git import Repo, Git
@@ -173,10 +173,10 @@ class AWSPentagonProject(PentagonProject):
         self._vpc_id = self.get_data('vpc_id', self._vpc_id)
 
         # DNS
-        self._dns_zone = self.get_data('dns_zone', '{}.com'.format(self._name))      
+        self._dns_zone = self.get_data('dns_zone', '{}.com'.format(self._name))
 
         # Kubernetes version
-        self._kubernetes_version = self.get_data('kubernetes_version', self.PentagonDefaults.kubernetes['version'])
+        self._kubernetes_version = self.get_data('kubernetes_version', self.PentagonDefaults.kubernetes['kubernetes_version'])
 
         # Working Kubernetes
         self._working_kubernetes_cluster_name = self.get_data('working_kubernetes_cluster_name', 'working-1.{}'.format(self._dns_zone))
@@ -188,6 +188,7 @@ class AWSPentagonProject(PentagonProject):
         self._working_kubernetes_worker_node_type = self.get_data('working_kubernetes_worker_node_type', self.PentagonDefaults.kubernetes['worker_node_type'])
         self._working_kubernetes_v_log_level = self.get_data('working_kubernetes_v_log_level', self.PentagonDefaults.kubernetes['v_log_level'])
         self._working_kubernetes_network_cidr = self.get_data('working_kubernetes_network_cidr', self.PentagonDefaults.kubernetes['network_cidr'])
+        self._working_third_octet = self.get_data('working_third_octet', self.PentagonDefaults.kubernetes['working_third_octet'])
 
         # Production Kubernetes
         self._production_kubernetes_cluster_name = self.get_data('production_kubernetes_cluster_name', 'production-1.{}'.format(self._dns_zone))
@@ -199,6 +200,7 @@ class AWSPentagonProject(PentagonProject):
         self._production_kubernetes_worker_node_type = self.get_data('production_kubernetes_worker_node_type', self.PentagonDefaults.kubernetes['worker_node_type'])
         self._production_kubernetes_v_log_level = self.get_data('production_kubernetes_v_log_level', self.PentagonDefaults.kubernetes['v_log_level'])
         self._production_kubernetes_network_cidr = self.get_data('production_kubernetes_network_cidr', self.PentagonDefaults.kubernetes['network_cidr'])
+        self._production_third_octet = self.get_data('production_third_octet', self.PentagonDefaults.kubernetes['production_third_octet'])
 
     def __default_aws_availability_zones(self):
         azs = []
@@ -246,7 +248,7 @@ class AWSPentagonProject(PentagonProject):
             'availability_zones': re.sub(" ", "", self._aws_availability_zones).split(","),
             'vpc_id': self._vpc_id,
             'ssh_key_path': "${{INFRASTRUCTURE_REPO}}/{}/{}.pub".format(self._private_path, self._ssh_keys['working_kube_key']),
-            'version': self._kubernetes_version,
+            'kubernetes_version': self._kubernetes_version,
             'ig_max_size': self._working_kubernetes_node_count,
             'ig_min_size': self._working_kubernetes_node_count,
             'master_availability_zones': [zone.strip() for zone in self._working_kubernetes_master_aws_zones.split(',')],
@@ -256,7 +258,8 @@ class AWSPentagonProject(PentagonProject):
             'kubernetes_v_log_level': self._working_kubernetes_v_log_level,
             'network_cidr': self._working_kubernetes_network_cidr,
             'network_cidr_base': self._vpc_cidr_base,
-            'kops_state_store_bucket': self._infrastructure_bucket
+            'kops_state_store_bucket': self._infrastructure_bucket,
+            'third_octet': self._working_third_octet
         }
         write_yaml_file("{}/inventory/default/clusters/working/vars.yml".format(self._repository_directory), context)
 
@@ -277,6 +280,7 @@ class AWSPentagonProject(PentagonProject):
             'network_cidr': self._production_kubernetes_network_cidr,
             'network_cidr_base': self._vpc_cidr_base,
             'kops_state_store_bucket': self._infrastructure_bucket,
+            'third_octet': self._production_third_octet
         }
         write_yaml_file("{}/inventory/default/clusters/production/vars.yml".format(self._repository_directory), context)
 

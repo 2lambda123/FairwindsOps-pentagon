@@ -92,7 +92,7 @@ Options:
     - Creates yml files in  `./<cluster_name>/` compiled from the data passed in.
     - `bash ./<cluster_name>/kops.sh` will create the cluster as configured.
     - Argument/ ConfigFile keys:
-      - `additional_policies`: Additional IAM policies to inflict upon the cluster
+      - `additional_policies`: Additional IAM policies to add to masters, nodes, or both
       - `vpc_id`: AWS VPC Id of VPC to create cluster in (required)
       - `cluster_name`: Name of the cluster to create (required)
       - `kops_state_store_bucket`: Name of the s3 bucket where Kops State will be stored (required)
@@ -111,7 +111,7 @@ Options:
       - `third_octet`: Starting value for the third octet of the subnet cidrs (default: 16)
       - `network_mask`: Value for network mask in subnet cidrs (defalt: 24)
       - `third_octet_increment`: Increment to increase third octet by for each of the Kubernetes subnets (default: 1) By default, the cidr of the first three private subnets will be 172.20.16.0/24, 172.20.17.0/24, 172.20.18.0/24
-      - `authorization`: Authorization type for cluster. Allowed values are `alwaysAllow` and `rbac` (default: alwaysAllow)
+      - `authorization`: Authorization type for cluster. Allowed values are `alwaysAllow` and `rbac` (default: rbac)
     - Example Config File
     ```
     availability_zones: [eu-west-1a, eu-west-1b, eu-west-1c]
@@ -171,7 +171,14 @@ Options:
     - Arguments:
       - `name`: name of account to add to inventory (required)
       - `type`: type of account to add to inventory aws or gcp (required).
-    - If a `-f` file is passed in, data are merged with `-D` values ovveriding the file values
+    - If a `-f` file is passed in, data are merged with `-D` values overriding the file values
+
+    - Example:
+        ```
+        pentagon add inventory -Dtype=aws -Dname=prod -Daws_access_key=KEY -Daws_secret_key=SECRETKEY -D=aws_default_region=us-east-1
+        ```
+
+
 
 ## Writing your own components
 
@@ -196,5 +203,3 @@ Examples of plugin component package module name and use:
 
 
 See [example](/example-component)
-
-
