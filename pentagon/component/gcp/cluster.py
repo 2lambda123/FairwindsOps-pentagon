@@ -37,9 +37,9 @@ class Public(ComponentBase):
         'network_name': 'kube',
         'nodes_subnetwork_name': 'kube_nodes',
         'region': 'us-central1',
-        'tf_module_gcp_vpc_native_version': 'master',
-        'tf_module_gke_module_version': 'master',
-        'tf_module_nodepool_module_version': 'master',
+        'tf_module_gcp_vpc_native_version': 'default-v1.0.0',
+        'tf_module_gke_module_version': 'public-vpc-native-v1.0.0',
+        'tf_module_nodepool_module_version': 'node-pool-v1.0.0',
     }
 
     @property
