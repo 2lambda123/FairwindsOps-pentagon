@@ -55,8 +55,6 @@ def cli(ctx, log_level, *args, **kwargs):
 @click.option('--force/--no-force', help="Ignore existing directories and copy project.")
 @click.option('--cloud', default="aws", help="Cloud provider to create default inventory. Defaults to 'aws'. [aws,gcp,none]")
 @click.option('--hash-type', default="aws", type=click.Choice(['aws', 'gcp']), help="Type of cloud project to create. Defaults to 'aws'")
-# General Cloud Options
-@click.option('--zones', help="Availability zones as a comma delimited list", cls=RequiredIf, required_if='cloud=gcp')
 # Currently only AWS but maybe we can/should add GCP later
 @click.option('--configure-vpn/--no-configure-vpn', default=True, help="Whether or not to configure a vpn. Default True.")
 @click.option('--vpc-name', help="Name of VPC to create.")
@@ -103,10 +101,12 @@ def cli(ctx, log_level, *args, **kwargs):
 @click.option('--production-kubernetes-v-log-level', help="V Log Level kubernetes production cluster.")
 # GCP Cloud options
 @click.option('--gcp-project', prompt=True, help="Google Cloud Project to create clusters in.", cls=RequiredIf, required_if='cloud=gcp')
+@click.option('--gcp-region', prompt=True, help="Google Cloud Project Region to use for Cluster.", cls=RequiredIf, required_if='cloud=gcp')
 @click.option('--gcp-cluster-name', prompt=True, help="Google GKE Cluster Name.", cls=RequiredIf, required_if='cloud=gcp')
 @click.option('--gcp-nodes-cidr', prompt=True, help="Google GKE Nodes CIDR.", cls=RequiredIf, required_if='cloud=gcp')
 @click.option('--gcp-services-cidr', prompt=True, help="Google GKE services CIDR.", cls=RequiredIf, required_if='cloud=gcp')
 @click.option('--gcp-pods-cidr', prompt=True, help="Google GKE pods CIDR.", cls=RequiredIf, required_if='cloud=gcp')
+@click.option('--gcp-kubernetes-version', prompt=True, help="Version of kubernetes to use for cluster nodes.", cls=RequiredIf, required_if='cloud=gcp')
 def start_project(ctx, name, **kwargs):
     """ Create an infrastructure project from scratch with the configured options """
 

@@ -35,7 +35,7 @@ class Public(ComponentBase):
     _defaults = {
         'cluster_id': '1',
         'network_name': 'kube',
-        'nodes_subnetwork_name': 'kube_nodes',
+        'nodes_subnetwork_name': 'kube-nodes',
         'region': 'us-central1',
         'tf_module_gcp_vpc_native_version': 'default-v1.0.0',
         'tf_module_gke_module_version': 'public-vpc-native-v1.0.0',

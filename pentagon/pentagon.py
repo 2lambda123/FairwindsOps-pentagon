@@ -312,24 +312,19 @@ class AWSPentagonProject(PentagonProject):
 
 
 class GCPPentagonProject(PentagonProject):
-    local_defaults = {
-        'working_cluster_name': 'working',
-        'production_cluster_name': 'production',
-    }
-
     def __init__(self, name, data={}):
         # Build translated data for inventory input
-        self._gcp_inventory_context = self._build_inv_params(data)
+        self._gcp_inventory_context = self._build_inv_params(name, data)
         # Add the project_name since it isn't passed in from click
         self._gcp_inventory_context['project_name'] = name
-        self._gcp_inventory_context['name'] = self._gcp_inventory_context['project']
+        self._gcp_inventory_context['project'] = self._gcp_inventory_context['gcp_project']
+        self._gcp_inventory_context['name'] = name
         super(GCPPentagonProject, self).__init__(name, data)
 
     @staticmethod
-    def _build_inv_params(input_context):
+    def _build_inv_params(name, input_context):
         gcp_context = input_context.copy()
         inventory_map = {
-            'gcp_project': 'project',
             'gcp_nodes_cidr': 'nodes_cidr',
             'gcp_services_cidr': 'services_cidr',
             'gcp_pods_cidr': 'pods_cidr',
@@ -338,8 +333,13 @@ class GCPPentagonProject(PentagonProject):
 
         for old_key, new_key in inventory_map.iteritems():
             if new_key in gcp_context.keys():
-                raise KeyError('Key already exists, this should not happen.')
+                if gcp_context[new_key]:
+                    raise KeyError(
+                        'Key already exists, this should not happen.')
             gcp_context[new_key] = gcp_context.pop(old_key)
+
+        # for two levels downstream into gke generator tf
+        gcp_context['region'] = gcp_context['gcp_region']
 
         return gcp_context
 
