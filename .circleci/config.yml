@@ -26,6 +26,7 @@ jobs:
       - run:
           name: Test Migration
           command: |
+            export PATH=$PATH:/home/circleci/.local/bin
             # this fails but that is the intent hence "|| true"
             last_version=$(pip install pentagon==  2>&1 | grep "Could not find" | awk -F',' '{ print $(NF -1) }' | sed s/[[:blank:]]/''/g) || true
             pip install --user pentagon==${last_version}
