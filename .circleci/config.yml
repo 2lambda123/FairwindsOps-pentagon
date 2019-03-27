@@ -39,7 +39,8 @@ jobs:
             cd $INFRASTRUCTURE_REPO
             # faking git config. The repo must have at least one commit for the migration to work
             git add . && git -c user.name='fake' -c user.email='fake@email.org' commit -m 'initial commit'
-            sudo pip install -e ~/pentagon --force
+            sudo pip install ~/pentagon
+            pentagon --version
             pentagon migrate --yes
       - run:
           name: Unit Tests
