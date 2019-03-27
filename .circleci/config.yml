@@ -46,11 +46,13 @@ jobs:
       - run:
           name: Unit Tests
           command: |
+            export PATH=$PATH:/home/circleci/.local/bin
             pip install --user -r ${HOME}/pentagon/tests/requirements.txt
             nosetests
       - run:
           name: Test Start Project
           command: |
+            export PATH=$PATH:/home/circleci/.local/bin
             yes | pentagon start-project circleci-test --aws-access-key=fake --aws-secret-key=fake
 
   release:
