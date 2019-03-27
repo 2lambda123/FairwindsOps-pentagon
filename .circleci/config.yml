@@ -26,7 +26,6 @@ jobs:
           name: Setup PATH to support pip user installs
           command: echo 'export PATH=$PATH:/home/circleci/.local/bin' >> $BASH_ENV
       - checkout
-      - setup_remote_docker
       - run:
           name: Test Migration
           command: |
