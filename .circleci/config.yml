@@ -30,13 +30,12 @@ jobs:
             # this fails but that is the intent hence "|| true"
             last_version=$(pip install pentagon==  2>&1 | grep "Could not find" | awk -F',' '{ print $(NF -1) }' | sed s/[[:blank:]]/''/g) || true
             pip install --user pentagon==${last_version}
-            # || true here is because we are wedged in that we need to test a previous version where this will error out
-            yes | pentagon start-project migration-test --aws-access-key=fake --aws-secret-key=fake || true
+            # nohup to get rid of interactive and thus prompts
+            nohup pentagon start-project migration-test --aws-access-key=fake --aws-secret-key=fake
             cd migration-test-infrastructure
             export INFRASTRUCTURE_REPO=$(pwd)
             cd inventory/default/clusters/production
-            # || true here is because we are wedged in that we need to test a previous version where this will error out
-            yes | pentagon add kops.cluster -f vars.yml -o cluster-config || true
+            nohup pentagon add kops.cluster -f vars.yml -o cluster-config
             cd $INFRASTRUCTURE_REPO
             # faking git config. The repo must have at least one commit for the migration to work
             git add . && git -c user.name='fake' -c user.email='fake@email.org' commit -m 'initial commit'
@@ -51,7 +50,7 @@ jobs:
       - run:
           name: Test Start Project
           command: |
-            yes | pentagon start-project circleci-test --aws-access-key=fake --aws-secret-key=fake
+            nohup pentagon start-project circleci-test --aws-access-key=fake --aws-secret-key=fake
 
   release:
     docker:
