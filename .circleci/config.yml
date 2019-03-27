@@ -19,7 +19,7 @@ jobs:
     docker:
       - image: circleci/python:2
     environment:
-      BASH_ENV: ~/.bashrc
+      BASH_ENV: /home/circleci/.bashrc
     working_directory: ~/pentagon
     steps:
       - run:
