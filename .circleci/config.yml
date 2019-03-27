@@ -23,14 +23,13 @@ jobs:
     working_directory: ~/pentagon
     steps:
       - run:
-          name: Setup PATH
+          name: Setup PATH to support pip user installs
           echo 'export PATH=$PATH:/home/circleci/.local/bin' >> $BASH_ENV
       - checkout
       - setup_remote_docker
       - run:
           name: Test Migration
           command: |
-            export PATH=$PATH:/home/circleci/.local/bin
             # this fails but that is the intent hence "|| true"
             last_version=$(pip install pentagon==  2>&1 | grep "Could not find" | awk -F',' '{ print $(NF -1) }' | sed s/[[:blank:]]/''/g) || true
             pip install --user pentagon==${last_version}
@@ -50,13 +49,11 @@ jobs:
       - run:
           name: Unit Tests
           command: |
-            export PATH=$PATH:/home/circleci/.local/bin
             pip install --user -r ${HOME}/pentagon/tests/requirements.txt
             nosetests
       - run:
           name: Test Start Project
           command: |
-            export PATH=$PATH:/home/circleci/.local/bin
             yes | pentagon start-project circleci-test --aws-access-key=fake --aws-secret-key=fake
 
   release:
