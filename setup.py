@@ -47,7 +47,7 @@ setup(name='pentagon',
       install_requires=[
         "click==6.7",
         "GitPython==3.1.41",
-        "Jinja2==3.1.4",
+        "Jinja2==3.1.5",
         "pycrypto==2.6.1",
         "oyaml>=0.8",
         "PyYAML>=5.0",
